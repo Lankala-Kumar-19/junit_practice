@@ -26,6 +26,10 @@ public class AccountService {
 
     public Account withdraw(Long accountId, BigDecimal amount) {
 
+        if(amount.compareTo(new BigDecimal("0"))==0) throw new ZeroWithdrawalException("zero withdraw is not possible");
+
+        if(amount.compareTo(new BigDecimal("0"))<0) throw new NegativeWithdrawalException("negative withdrawal is not possible");
+
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountNotFoundException("Account not found"));
 
@@ -40,6 +44,7 @@ public class AccountService {
 
     public void transfer(Long fromId, Long toId, BigDecimal amount) {
 
+        if(amount.compareTo(new BigDecimal("0"))<=0) throw new ZeroOrNegativeTransfer("zero or negative transfer");
         Account from = withdraw(fromId, amount);
         deposit(toId, amount);
     }
